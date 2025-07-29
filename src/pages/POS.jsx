@@ -46,10 +46,10 @@ function POS() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen md:min-h-0">
       {/* Left: Item selection */}
-      <div className="w-full lg:w-2/3 p-4">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="w-full md:w-2/3 p-4 relative">
+        <div className="sticky top-[72px] bg-white p-2 z-50 shadow rounded flex items-center gap-2 mb-4">
           <input
             type="text"
             placeholder="Search..."
@@ -70,21 +70,21 @@ function POS() {
         </div>
 
         {/* Item list */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-26">
           {filteredItems.map((item) => (
             <div
               key={item.id}
               onClick={() => item.stock > 0 && addToCart(item)}
-              className={`border rounded p-2 shadow cursor-pointer ${
+              className={`border rounded p-1 sm:p-2 shadow cursor-pointer text-[10px] sm:text-sm ${
                 item.stock === 0
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-gray-100"
               }`}
             >
-              <h3 className="font-bold">{item.name}</h3>
-              <p className="text-sm">₱{item.price}</p>
+              <h3 className="font-bold text-xs sm:text-base">{item.name}</h3>
+              <p className="text-[10px] sm:text-sm">₱{item.price}</p>
               <p
-                className={`text-xs ${
+                className={`text-[10px] sm:text-xs ${
                   item.stock === 0 ? "text-red-500 font-bold" : "text-gray-500"
                 }`}
               >

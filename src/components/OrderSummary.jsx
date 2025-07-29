@@ -19,7 +19,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
     const content = cloned.innerHTML;
     const win = window.open("", "", "width=300,height=600");
 
-  win.document.write(`
+    win.document.write(`
   <html>
     <head>
       <style>
@@ -100,7 +100,6 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
   </html>
 `);
 
-
     win.document.close();
   };
 
@@ -138,15 +137,23 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
   const isCashSufficient = parseFloat(cash) >= total;
 
   return (
-    <div className="w-full lg:w-1/3 bg-white p-4 shadow-lg relative l:static fixed bottom-0 left-0 right-0 z-40 border-t lg:border-none">
+    <div
+      className="w-full md:w-1/3 bg-white p-2 sm:p-4 shadow-lg border border-t md:border-t-0 
+  sticky bottom-0 mt-auto z-40 
+  md:static md:top-[72px] md:right-0 md:h-screen md:overflow-y-auto 
+  text-xs sm:text-sm"
+    >
       <h2 className="text-lg font-bold mb-4">Order Summary</h2>
 
       <div className="mb-2 space-y-2">
         {cart.map((item) => (
-          <div key={item.id} className="flex justify-between items-center">
-            <div className="flex flex-col text-sm">
+          <div
+            key={item.id}
+            className="flex justify-between items-center text-[10px] sm:text-sm"
+          >
+            <div className="flex flex-col">
               <span>{item.name}</span>
-              <div className="flex items-center gap-1 mt-1">
+              <div className="flex items-center gap-1 mt-1 text-[10px] sm:text-sm">
                 <button
                   onClick={() =>
                     setCart((prev) =>
@@ -184,7 +191,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
       </div>
 
       <div className="border-t pt-2 mt-2">
-        <div className="flex justify-between font-semibold">
+        <div className="flex justify-between font-semibold text-[11px] sm:text-sm">
           <span>Total:</span>
           <span>₱{total.toFixed(2)}</span>
         </div>
@@ -210,7 +217,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
       </div>
 
       <button
-        className="mt-4 w-full bg-green-600 text-white py-2 rounded disabled:bg-gray-300 disabled:text-gray-500"
+        className="mt-4 w-full bg-green-600 text-white py-1 sm:py-2 text-[11px] sm:text-base rounded disabled:bg-gray-300 disabled:text-gray-500"
         onClick={() => {
           const now = new Date();
           const id = `R-${now
