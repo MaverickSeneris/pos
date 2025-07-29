@@ -1,0 +1,284 @@
+import { useState, useRef } from "react";
+
+function OrderSummary({ cart, setCart, inventory, setInventory }) {
+  const [cash, setCash] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [receiptId, setReceiptId] = useState("");
+  const receiptRef = useRef();
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const change = parseFloat(cash || 0) - total;
+
+  const printReceiptOnly = () => {
+    if (!receiptRef.current) return;
+
+    const cloned = receiptRef.current.cloneNode(true);
+    const buttons = cloned.querySelectorAll("button");
+    buttons.forEach((btn) => btn.remove());
+
+    const content = cloned.innerHTML;
+    const win = window.open("", "", "width=300,height=600");
+
+  win.document.write(`
+  <html>
+    <head>
+      <style>
+        * {
+          font-family: monospace;
+          font-size: 10px;
+          line-height: 1.3;
+        }
+        body {
+          width: 58mm;
+          margin: 0;
+          padding: 8px;
+        }
+        .receipt {
+          width: 100%;
+        }
+        .center {
+          text-align: center;
+        }
+        .line {
+          border-top: 1px dashed #000;
+          margin: 6px 0;
+        }
+        .receipt-line {
+          display: flex;
+          justify-content: space-between;
+        }
+        .bold {
+          font-weight: bold;
+        }
+        .cut-line {
+          text-align: center;
+          margin-top: 10px;
+          font-size: 10px;
+        }
+      </style>
+    </head>
+    <body onload="window.print(); window.close();">
+      <div class="receipt">
+        <div class="center bold">Korean Mart</div>
+        <div class="center">Brgy. Sta. Rosa, Rizal, Laguna</div>
+        <div class="center">Receipt #: ${receiptId}</div>
+        
+        <div class="line"></div>
+
+       ${cart
+         .map(
+           (item) => `
+          <div class="receipt-line">
+            <span>${item.name} x${item.qty}</span>
+            <span>₱${(item.price * item.qty).toFixed(2)}</span>
+          </div>
+        `
+         )
+         .join("")}
+
+        <div class="line"></div>
+
+        <div class="receipt-line bold">
+          <span>Total:</span>
+          <span>₱${total.toFixed(2)}</span>
+        </div>
+        <div class="receipt-line">
+          <span>Cash:</span>
+          <span>₱${parseFloat(cash || 0).toFixed(2)}</span>
+        </div>
+        <div class="receipt-line">
+          <span>Change:</span>
+          <span>₱${change.toFixed(2)}</span>
+        </div>
+
+        <div class="line"></div>
+        <div class="center">Thank you! 감사합니다!</div>
+
+        <div class="cut-line">------------------------------</div>
+      </div>
+    </body>
+  </html>
+`);
+
+
+    win.document.close();
+  };
+
+  const handleCheckout = () => {
+    const newSale = {
+      id: receiptId,
+      items: cart,
+      total,
+      cash: parseFloat(cash || 0),
+      change,
+      date: new Date().toISOString(),
+    };
+
+    const existing = JSON.parse(localStorage.getItem("sales")) || [];
+    localStorage.setItem("sales", JSON.stringify([...existing, newSale]));
+
+    setCart([]);
+
+    const updatedInventory = inventory.map((item) => {
+      const cartItem = cart.find((c) => c.id === item.id);
+      if (cartItem) {
+        return { ...item, stock: item.stock - cartItem.qty };
+      }
+      return item;
+    });
+    setInventory(updatedInventory);
+    localStorage.setItem("inventory", JSON.stringify(updatedInventory));
+
+    setCash("");
+
+    printReceiptOnly();
+    setTimeout(() => setShowModal(false), 500);
+  };
+
+  const isCashSufficient = parseFloat(cash) >= total;
+
+  return (
+    <div className="w-full lg:w-1/3 bg-white p-4 shadow-lg relative l:static fixed bottom-0 left-0 right-0 z-40 border-t lg:border-none">
+      <h2 className="text-lg font-bold mb-4">Order Summary</h2>
+
+      <div className="mb-2 space-y-2">
+        {cart.map((item) => (
+          <div key={item.id} className="flex justify-between items-center">
+            <div className="flex flex-col text-sm">
+              <span>{item.name}</span>
+              <div className="flex items-center gap-1 mt-1">
+                <button
+                  onClick={() =>
+                    setCart((prev) =>
+                      prev
+                        .map((i) =>
+                          i.id === item.id ? { ...i, qty: i.qty - 1 } : i
+                        )
+                        .filter((i) => i.qty > 0)
+                    )
+                  }
+                  className="px-2 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  −
+                </button>
+                <span className="px-2">{item.qty}</span>
+                <button
+                  onClick={() =>
+                    setCart((prev) =>
+                      prev.map((i) =>
+                        i.id === item.id ? { ...i, qty: i.qty + 1 } : i
+                      )
+                    )
+                  }
+                  className="px-2 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <span className="text-sm font-medium">
+              ₱{(item.price * item.qty).toFixed(2)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t pt-2 mt-2">
+        <div className="flex justify-between font-semibold">
+          <span>Total:</span>
+          <span>₱{total.toFixed(2)}</span>
+        </div>
+
+        <div className="mt-2">
+          <label className="text-sm">Cash Paid:</label>
+          <input
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9]*"
+            className="border p-1 rounded w-full"
+            value={cash}
+            onChange={(e) => setCash(e.target.value)}
+          />
+        </div>
+
+        <div className="flex justify-between mt-2">
+          <span>Change:</span>
+          <span className={change < 0 ? "text-red-500" : ""}>
+            ₱{change.toFixed(2)}
+          </span>
+        </div>
+      </div>
+
+      <button
+        className="mt-4 w-full bg-green-600 text-white py-2 rounded disabled:bg-gray-300 disabled:text-gray-500"
+        onClick={() => {
+          const now = new Date();
+          const id = `R-${now
+            .toISOString()
+            .replace(/[-:.TZ]/g, "")
+            .slice(0, 12)}${now.getMilliseconds()}`;
+
+          setReceiptId(id);
+          setShowModal(true);
+        }}
+        disabled={total === 0 || !isCashSufficient}
+      >
+        Print Receipt
+      </button>
+
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <div ref={receiptRef}>
+              <div className="receipt-print w-[58mm] mx-auto font-mono text-[10px]">
+                <h2 className="font-bold text-center text-xs">Korean Mart</h2>
+                <p className="text-center">Brgy. Sta. Rosa, Rizal, Laguna</p>
+                <p className="text-center mb-1">Receipt #: {receiptId}</p>
+                <div className="border-t border-b py-1 my-1">
+                  {cart.map((item) => (
+                    <div key={item.id} className="flex justify-between">
+                      <span>
+                        {item.name} x{item.qty}
+                      </span>
+                      <span>₱{(item.price * item.qty).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between">
+                  <span>Total:</span>
+                  <span>₱{total.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Cash:</span>
+                  <span>₱{parseFloat(cash || 0).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span>Change:</span>
+                  <span>₱{change.toFixed(2)}</span>
+                </div>
+                <p className="text-center mt-2">Thank you! 감사합니다!</p>
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-4 no-print">
+              <button
+                onClick={handleCheckout}
+                className="bg-black text-white px-2 py-1 rounded text-xs"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-300 text-black px-2 py-1 rounded text-xs"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default OrderSummary;
