@@ -141,7 +141,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
       className="w-full md:w-1/3 bg-white p-2 sm:p-4 shadow-lg border border-t md:border-t-0 
   sticky bottom-0 mt-auto z-40 
   md:static md:top-[72px] md:right-0 md:h-screen md:overflow-y-auto 
-  text-xs sm:text-sm"
+  text-xs sm:text-sm mb-20"
     >
       <h2 className="text-lg font-bold mb-4">Order Summary</h2>
 
