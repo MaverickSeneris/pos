@@ -8,7 +8,10 @@ function POS() {
   const [filteredItems, setFilteredItems] = useState([]);
   const [category, setCategory] = useState("All");
   const [search, setSearch] = useState("");
-  const [cart, setCart] = useState([]);
+const [cart, setCart] = useState(() => {
+  const saved = localStorage.getItem("cart");
+  return saved ? JSON.parse(saved) : [];
+});
 
   // Load inventory and cart from localStorage
   useEffect(() => {
@@ -21,6 +24,22 @@ function POS() {
     // Apply filters initially
     setFilteredItems(savedInventory);
   }, []);
+
+  //Load cart from localStorage on mount
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("inventory")) || [];
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setInventory(data);
+    setFilteredItems(data);
+    setCart(savedCart); // <-- Load persisted cart
+  }, []);
+
+useEffect(() => {
+  localStorage.setItem("cart", JSON.stringify(cart));
+}, [cart]);
+
+
+
 
   // Update filtered items on inventory/category/search changes
   useEffect(() => {

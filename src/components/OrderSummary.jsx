@@ -6,10 +6,10 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
   const [receiptId, setReceiptId] = useState("");
   const receiptRef = useRef();
 
-  // Restore Cart form localStorage
+  // 👉 Add this useEffect
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    if (savedCart.length > 0) {
+    if (savedCart.length && cart.length === 0) {
       setCart(savedCart);
     }
   }, []);
@@ -17,7 +17,6 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
-
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const change = parseFloat(cash || 0) - total;
@@ -243,7 +242,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
           onClick={() => {
             setCart([]);
             setCash("");
-            localStorage.removeItem("cart"); // <- add this
+            localStorage.removeItem("cart"); // <-- clear on reset
           }}
           className="mt-2 w-full bg-red-100 text-red-600 py-1 sm:py-2 text-[11px] sm:text-base rounded hover:bg-red-200 active:scale-95 transition"
         >
