@@ -122,22 +122,22 @@ function Dashboard() {
     <div className="p-4 pb-24 text-sm md:text-base">
       <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 py-2">
         <h1 className="text-xl md:text-2xl font-bold">Dashboard</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={handleBackToPOS}
-            className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded text-sm"
+            className="bg-gray-300 hover:bg-gray-400 px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-sm rounded"
           >
-            Back to POS
+            POS
           </button>
           <button
             onClick={handleViewReceipts}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-sm rounded"
           >
-            View Receipts
+            Receipts
           </button>
           <button
             onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+            className="bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-sm rounded"
           >
             Logout
           </button>

@@ -250,7 +250,7 @@ function Inventory() {
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm border">
+        <table className="w-full text-sm border-collapse border">
           <thead className="bg-gray-100">
             <tr>
               <th className="border p-2">Name</th>
@@ -265,20 +265,29 @@ function Inventory() {
               <tr key={item.id} className="text-center">
                 <td className="border p-2">{item.name}</td>
                 <td className="border p-2">₱{item.price}</td>
-                <td className="border p-2">{item.stock}</td>
+                <td className="border p-2">
+                  {item.stock === 0 ? (
+                    <span className="text-red-500 font-semibold text-xs">
+                      Out of Stock
+                    </span>
+                  ) : (
+                    item.stock
+                  )}
+                </td>
+
                 <td className="border p-2">{item.category}</td>
-                <td className="border p-2 space-x-1">
+                <td className="border p-2 flex gap-1 justify-center flex-wrap">
                   <button
                     onClick={() => handleEdit(item)}
-                    className="bg-blue-500 text-white px-2 rounded"
+                    className=" text-green-400 font-semibold px-2 py-0.5 text-xs rounded"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="bg-red-500 text-white px-2 rounded"
+                    className="text-red-400 font-semibold px-2 py-0.5 text-xs rounded"
                   >
-                    Delete
+                    Del
                   </button>
                 </td>
               </tr>

@@ -49,7 +49,7 @@ function POS() {
     <div className="flex flex-col md:flex-row min-h-screen md:min-h-0">
       {/* Left: Item selection */}
       <div className="w-full md:w-2/3 p-4 relative">
-        <div className="sticky top-[72px] bg-white p-2 z-50 shadow rounded flex items-center gap-2 mb-4">
+        <div className="sticky top-[72px] bg-white p-2 z-10 shadow rounded flex items-center gap-2 mb-4">
           <input
             type="text"
             placeholder="Search..."
@@ -75,11 +75,15 @@ function POS() {
             <div
               key={item.id}
               onClick={() => item.stock > 0 && addToCart(item)}
-              className={`border rounded p-1 sm:p-2 shadow cursor-pointer text-[10px] sm:text-sm ${
-                item.stock === 0
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-100"
-              }`}
+              className={`
+    border rounded p-1 sm:p-2 shadow text-[10px] sm:text-sm 
+    transition-transform duration-100
+    ${
+      item.stock === 0
+        ? "opacity-50 cursor-not-allowed bg-red-100"
+        : "cursor-pointer hover:bg-gray-100 active:bg-green-100 active:scale-95"
+    }
+  `}
             >
               <h3 className="font-bold text-xs sm:text-base">{item.name}</h3>
               <p className="text-[10px] sm:text-sm">₱{item.price}</p>

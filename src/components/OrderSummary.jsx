@@ -164,7 +164,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
                         .filter((i) => i.qty > 0)
                     )
                   }
-                  className="px-2 bg-gray-200 rounded hover:bg-gray-300"
+                  className="px-2 bg-gray-200 rounded hover:bg-gray-300 active:scale-95 active:bg-gray-400 transition"
                 >
                   −
                 </button>
@@ -177,7 +177,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
                       )
                     )
                   }
-                  className="px-2 bg-gray-200 rounded hover:bg-gray-300"
+                  className="px-2 bg-gray-200 rounded hover:bg-gray-300 active:scale-95 active:bg-gray-400 transition"
                 >
                   +
                 </button>
@@ -189,6 +189,15 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
           </div>
         ))}
       </div>
+      {cart.length > 0 && <button
+        onClick={() => {
+          setCart([]);
+          setCash("");
+        }}
+        className="mt-2 w-full bg-red-100 text-red-600 py-1 sm:py-2 text-[11px] sm:text-base rounded hover:bg-red-200 active:scale-95 transition"
+      >
+        Reset Order
+      </button>}
 
       <div className="border-t pt-2 mt-2">
         <div className="flex justify-between font-semibold text-[11px] sm:text-sm">
@@ -217,7 +226,8 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
       </div>
 
       <button
-        className="mt-4 w-full bg-green-600 text-white py-1 sm:py-2 text-[11px] sm:text-base rounded disabled:bg-gray-300 disabled:text-gray-500"
+        className="mt-4 w-full bg-green-600 text-white py-1 sm:py-4 text-[11px] sm:text-base rounded disabled:bg-gray-300 disabled:text-gray-500
+    active:scale-95 active:bg-green-700 transition"
         onClick={() => {
           const now = new Date();
           const id = `R-${now
