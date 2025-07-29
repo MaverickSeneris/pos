@@ -1,10 +1,23 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react"; // already imported
 
 function OrderSummary({ cart, setCart, inventory, setInventory }) {
   const [cash, setCash] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [receiptId, setReceiptId] = useState("");
   const receiptRef = useRef();
+
+  // Restore Cart form localStorage
+  useEffect(() => {
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (savedCart.length > 0) {
+      setCart(savedCart);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const change = parseFloat(cash || 0) - total;
@@ -117,6 +130,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
     localStorage.setItem("sales", JSON.stringify([...existing, newSale]));
 
     setCart([]);
+    localStorage.removeItem("cart");
 
     const updatedInventory = inventory.map((item) => {
       const cartItem = cart.find((c) => c.id === item.id);
@@ -152,32 +166,67 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
             className="flex justify-between items-center text-[10px] sm:text-sm"
           >
             <div className="flex flex-col">
-              <span>{item.name}</span>
+              <span>
+                {item.name}{" "}
+                <span className="font-bold text-gray-700">x{item.qty}</span>
+              </span>
+
               <div className="flex items-center gap-1 mt-1 text-[10px] sm:text-sm">
                 <button
-                  onClick={() =>
-                    setCart((prev) =>
-                      prev
-                        .map((i) =>
+                  onClick={() => {
+                    if (item.qty > 1) {
+                      // Decrease cart qty
+                      setCart((prev) =>
+                        prev.map((i) =>
                           i.id === item.id ? { ...i, qty: i.qty - 1 } : i
                         )
-                        .filter((i) => i.qty > 0)
-                    )
-                  }
-                  className="px-2 bg-gray-200 rounded hover:bg-gray-300 active:scale-95 active:bg-gray-400 transition"
+                      );
+
+                      // Restore 1 stock to inventory
+                      setInventory((prev) =>
+                        prev.map((i) =>
+                          i.id === item.id ? { ...i, stock: i.stock + 1 } : i
+                        )
+                      );
+                    } else {
+                      // If qty is 1, remove item and restore 1 stock
+                      setCart((prev) => prev.filter((i) => i.id !== item.id));
+                      setInventory((prev) =>
+                        prev.map((i) =>
+                          i.id === item.id ? { ...i, stock: i.stock + 1 } : i
+                        )
+                      );
+                    }
+                  }}
+                  className="px-2 bg-gray-200 rounded hover:bg-gray-300 active:scale-90 transition"
                 >
                   −
                 </button>
-                <span className="px-2">{item.qty}</span>
+
+                <span className="px-2 font-semibold">{item.qty}</span>
                 <button
-                  onClick={() =>
-                    setCart((prev) =>
-                      prev.map((i) =>
-                        i.id === item.id ? { ...i, qty: i.qty + 1 } : i
-                      )
-                    )
-                  }
-                  className="px-2 bg-gray-200 rounded hover:bg-gray-300 active:scale-95 active:bg-gray-400 transition"
+                  onClick={() => {
+                    // Check if there's stock left in inventory before adding
+                    const itemInInventory = inventory.find(
+                      (i) => i.id === item.id
+                    );
+                    if (itemInInventory?.stock > 0) {
+                      // Add 1 to cart
+                      setCart((prev) =>
+                        prev.map((i) =>
+                          i.id === item.id ? { ...i, qty: i.qty + 1 } : i
+                        )
+                      );
+
+                      // Subtract 1 from inventory stock
+                      setInventory((prev) =>
+                        prev.map((i) =>
+                          i.id === item.id ? { ...i, stock: i.stock - 1 } : i
+                        )
+                      );
+                    }
+                  }}
+                  className="px-2 bg-gray-200 rounded hover:bg-gray-300 active:scale-90 transition"
                 >
                   +
                 </button>
@@ -189,15 +238,18 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
           </div>
         ))}
       </div>
-      {cart.length > 0 && <button
-        onClick={() => {
-          setCart([]);
-          setCash("");
-        }}
-        className="mt-2 w-full bg-red-100 text-red-600 py-1 sm:py-2 text-[11px] sm:text-base rounded hover:bg-red-200 active:scale-95 transition"
-      >
-        Reset Order
-      </button>}
+      {cart.length > 0 && (
+        <button
+          onClick={() => {
+            setCart([]);
+            setCash("");
+            localStorage.removeItem("cart"); // <- add this
+          }}
+          className="mt-2 w-full bg-red-100 text-red-600 py-1 sm:py-2 text-[11px] sm:text-base rounded hover:bg-red-200 active:scale-95 transition"
+        >
+          Reset Order
+        </button>
+      )}
 
       <div className="border-t pt-2 mt-2">
         <div className="flex justify-between font-semibold text-[11px] sm:text-sm">
