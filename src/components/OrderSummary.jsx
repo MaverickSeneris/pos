@@ -174,27 +174,33 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
                 <button
                   onClick={() => {
                     if (item.qty > 1) {
-                      // Decrease cart qty
                       setCart((prev) =>
                         prev.map((i) =>
                           i.id === item.id ? { ...i, qty: i.qty - 1 } : i
                         )
                       );
 
-                      // Restore 1 stock to inventory
-                      setInventory((prev) =>
-                        prev.map((i) =>
-                          i.id === item.id ? { ...i, stock: i.stock + 1 } : i
-                        )
+                      const updatedInventory = inventory.map((i) =>
+                        i.id === item.id ? { ...i, stock: i.stock + 1 } : i
                       );
+
+                      setInventory(updatedInventory);
+                      localStorage.setItem(
+                        "inventory",
+                        JSON.stringify(updatedInventory)
+                      ); // \u2190 don't forget this
                     } else {
-                      // If qty is 1, remove item and restore 1 stock
                       setCart((prev) => prev.filter((i) => i.id !== item.id));
-                      setInventory((prev) =>
-                        prev.map((i) =>
-                          i.id === item.id ? { ...i, stock: i.stock + 1 } : i
-                        )
+
+                      const updatedInventory = inventory.map((i) =>
+                        i.id === item.id ? { ...i, stock: i.stock + 1 } : i
                       );
+
+                      setInventory(updatedInventory);
+                      localStorage.setItem(
+                        "inventory",
+                        JSON.stringify(updatedInventory)
+                      ); // \u2190 also here
                     }
                   }}
                   className="px-2 bg-gray-200 rounded hover:bg-gray-300 active:scale-90 transition"
@@ -240,9 +246,24 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
       {cart.length > 0 && (
         <button
           onClick={() => {
+            // Restore inventory based on current cart
+            const restoredInventory = inventory.map((invItem) => {
+              const cartItem = cart.find((c) => c.id === invItem.id);
+              if (cartItem) {
+                return { ...invItem, stock: invItem.stock + cartItem.qty };
+              }
+              return invItem;
+            });
+
+            setInventory(restoredInventory);
+            localStorage.setItem(
+              "inventory",
+              JSON.stringify(restoredInventory)
+            ); // Save the restored state
+
             setCart([]);
             setCash("");
-            localStorage.removeItem("cart"); // <-- clear on reset
+            localStorage.removeItem("cart");
           }}
           className="mt-2 w-full bg-red-100 text-red-600 py-1 sm:py-2 text-[11px] sm:text-base rounded hover:bg-red-200 active:scale-95 transition"
         >
