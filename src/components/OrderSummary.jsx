@@ -156,6 +156,14 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
   md:static md:top-[72px] md:right-0 md:h-screen md:overflow-y-auto 
   text-xs sm:text-sm mb-20"
     >
+      <div className="hidden md:flex flex-col border-b p-1 mb-4">
+        <div className=" flex justify-between items-center">
+          <span className="font-bold">Total:</span>
+          <span className="font-bold md:text-4xl text-green-500">
+            ₱{total.toFixed(2)}
+          </span>
+        </div>
+      </div>
       <h2 className="text-lg font-bold mb-4">Order Summary</h2>
 
       <div className="mb-2 space-y-2">
@@ -298,7 +306,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
       </div>
 
       <button
-        className="mt-4 w-full bg-green-600 text-white py-1 sm:py-4 text-[11px] sm:text-base rounded disabled:bg-gray-300 disabled:text-gray-500
+        className="text-[16px] py-2 mt-4 w-full font-semibold bg-green-600 text-white py-1 sm:py-4 text-[11px] sm:text-base rounded disabled:bg-gray-300 disabled:text-gray-500
     active:scale-95 active:bg-green-700 transition"
         onClick={() => {
           const now = new Date();
