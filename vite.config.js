@@ -14,8 +14,8 @@ export default defineConfig({
         name: "Korean Mart POS",
         short_name: "POS",
         description: "Offline-ready POS for small stores",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
+        theme_color: "#1c398e",
+        background_color: "#1c398e",
         display: "standalone",
         start_url: "/",
         icons: [
