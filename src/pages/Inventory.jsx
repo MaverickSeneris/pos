@@ -3,78 +3,79 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 
-const defaultData = [
+export const defaultData = [
   {
-    id: uuidv4(),
+    id: "item-samyang",
     name: "Samyang Spicy Ramen",
     price: 55,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 20,
     category: "Noodles",
   },
   {
-    id: uuidv4(),
+    id: "item-banana-milk",
     name: "Banana Milk",
     price: 35,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 25,
     category: "Drinks",
   },
   {
-    id: uuidv4(),
+    id: "item-choco-pie",
     name: "Choco Pie",
     price: 20,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 30,
     category: "Snacks",
   },
   {
-    id: uuidv4(),
+    id: "item-pepero-almond",
     name: "Pepero Almond",
     price: 40,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 18,
     category: "Snacks",
   },
   {
-    id: uuidv4(),
+    id: "item-soju-grape",
     name: "Soju (Green Grape)",
     price: 95,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 40,
     category: "Drinks",
   },
   {
-    id: uuidv4(),
+    id: "item-melona",
     name: "Melona Ice Cream",
     price: 30,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 20,
     category: "Frozen",
   },
   {
-    id: uuidv4(),
+    id: "item-yogurt-drink",
     name: "Binggrae Yogurt Drink",
     price: 25,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 28,
     category: "Drinks",
   },
   {
-    id: uuidv4(),
+    id: "item-topokki",
     name: "Topokki (Rice Cake) Pack",
     price: 70,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 22,
     category: "Food",
   },
   {
-    id: uuidv4(),
+    id: "item-seaweed-snack",
     name: "Gim Seaweed Snack",
     price: 18,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 35,
     category: "Snacks",
   },
   {
-    id: uuidv4(),
+    id: "item-corn-tea",
     name: "Corn Tea",
     price: 45,
-    stock: Math.floor(Math.random() * 40) + 1,
+    stock: 15,
     category: "Drinks",
   },
 ];
+
 
 function Inventory() {
   const navigate = useNavigate();

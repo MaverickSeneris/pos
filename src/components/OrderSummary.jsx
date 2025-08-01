@@ -131,13 +131,8 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
     setCart([]);
     localStorage.removeItem("cart");
 
-    const updatedInventory = inventory.map((item) => {
-      const cartItem = cart.find((c) => c.id === item.id);
-      if (cartItem) {
-        return { ...item, stock: item.stock - cartItem.qty };
-      }
-      return item;
-    });
+    // 🔥 Do NOT deduct stock again here
+    const updatedInventory = [...inventory];
     setInventory(updatedInventory);
     localStorage.setItem("inventory", JSON.stringify(updatedInventory));
 
@@ -146,6 +141,7 @@ function OrderSummary({ cart, setCart, inventory, setInventory }) {
     printReceiptOnly();
     setTimeout(() => setShowModal(false), 500);
   };
+
 
   const isCashSufficient = parseFloat(cash) >= total;
 
